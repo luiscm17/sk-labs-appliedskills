@@ -1,0 +1,65 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# .NET build output
+bin/
+obj/
+
+# Visual Studio Code settings
+.vscode/
+
+# Visual Studio files
+*.user
+*.suo
+.vs/
+
+# Environment files
+.env
+
+# Logs
+*.log
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+
+# Python virtual environments
+labenv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+**/appsettings.json
