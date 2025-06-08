@@ -9,18 +9,14 @@ var config = new ConfigurationBuilder()
     .Build();
 
 // Set your values in appsettings.json
-string apikey = config["OpenAI:apikey"]!;
-string endpoint = config["OpenAI:endpoint"]!;
-string model = config["OpenAI:model"]!;
+string apiKey = config["PROJECT_KEY"]!;
+string endpoint = config["PROJECT_ENDPOINT"]!;
+string deploymentName = config["DEPLOYMENT_NAME"]!;
 
 // Create a kernel with Azure OpenAI chat completion
 var builder = Kernel.CreateBuilder();
-builder.AddAzureOpenAIChatCompletion(
-    model ?? throw new ArgumentNullException(nameof(model), "Model deployment name cannot be null"),
-    endpoint ?? throw new ArgumentNullException(nameof(endpoint), "Endpoint cannot be null"),
-    apikey ?? throw new ArgumentNullException(nameof(apikey), "API key cannot be null"));
-
-OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
+builder.AddAzureOpenAIChatCompletion(deploymentName, endpoint, apiKey);
+OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new() 
 {
     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
 };
@@ -28,8 +24,7 @@ OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new()
 var kernel = builder.Build();
 kernel.Plugins.AddFromType<FlightBookingPlugin>("FlightBookingPlugin");
 
-// Add the permission filter to the kernel => Done
-kernel.FunctionInvocationFilters.Add(new PermissionFilter());
+// Add the permission filter to the kernel
 
 
 var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
@@ -41,15 +36,13 @@ await GetReply();
 GetInput();
 await GetReply();
 
-void GetInput()
-{
+void GetInput() {
     Console.Write("User: ");
     string input = Console.ReadLine()!;
     history.AddUserMessage(input);
 }
 
-async Task GetReply()
-{
+async Task GetReply() {
     ChatMessageContent reply = await chatCompletionService.GetChatMessageContentAsync(
         history,
         executionSettings: openAIPromptExecutionSettings,
@@ -65,21 +58,12 @@ void AddUserMessage(string msg)
     history.AddUserMessage(msg);
 }
 
-// Implement the function filter interface => Done
-public class PermissionFilter : IFunctionInvocationFilter
+// Implement the function filter interface
+public class PermissionFilter
 {
 
-    // Implement the function invocation method => Done
-    public async Task OnFunctionInvocationAsync(FunctionInvocationContext context,
-        Func<FunctionInvocationContext, Task> next)
-    {
-        if (!HasUserPermission(context.Function.PluginName, context.Function.Name))
-        {
-            context.Result = new FunctionResult(context.Result, "The operation was not approved by the user");
-            return;
-        }
-        await next(context);
-    }
+    // Implement the function invocation method
+    
 
     private Boolean HasUserPermission(string pluginName, string functionName)
     {
