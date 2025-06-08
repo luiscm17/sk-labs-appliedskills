@@ -17,28 +17,27 @@ public class FlightBookingPlugin
     [KernelFunction("search_flights")]
     [Description("Searches for available flights based on the destination and departure date in the format YYYY-MM-DD")]
     [return: Description("A list of available flights")]
-    public List<FlightModel> SearchFlights(string destination, string departure)
+    public List<FlightModel> SearchFlights(string destination, string departureDate)
     {
         // Filter flights based on destination
         return flights.Where(flight =>
         flight.Destination.Equals(destination, StringComparison.OrdinalIgnoreCase) &&
-        flight.DepartureDate.Equals(departure)).ToList();
+        flight.DepartureDate.Equals(departureDate)).ToList();
     }
-
-
 
     // Create a kernel function to book flightss
     [KernelFunction("book_flight")]
     [Description("Books a flight based on the flight ID provided")]
-    [return: Description("Booking Configuration message")]
-    public string BookFlight(int flightID)
+    [return: Description("Booking confirmation message")]
+    public string BookFlight(int flightId)
     {
         // Add logic to book a flight
-        var flight = flights.FirstOrDefault(f => f.Id == flightID);
+        var flight = flights.FirstOrDefault(f => f.Id == flightId);
         if (flight == null)
         {
-            return "flight not found. Please provided a valid flight ID.";
+            return "Flight not found. Please provide a valid flight ID.";
         }
+
         if (flight.IsBooked)
         {
             return $"You've already booked this flight.";
@@ -46,11 +45,11 @@ public class FlightBookingPlugin
 
         flight.IsBooked = true;
         SaveFlightsToFile();
-        return @$"Flight booked successfully! Airline: {flight.Airline},
-        Destination: {flight.Destination},
-        Departure: {flight.DepartureDate},
-        Price: ${flight.Price}.";
 
+        return @$"Flight booked successfully! Airline: {flight.Airline}, 
+        Destination: {flight.Destination}, 
+        Departure: {flight.DepartureDate}, 
+        Price: ${flight.Price}.";
     }
 
 

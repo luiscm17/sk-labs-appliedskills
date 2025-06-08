@@ -24,10 +24,20 @@ var kernel = builder.Build();
 var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
 // Add the plugin to the kernel
+kernel.Plugins.AddFromType<FlightBookingPlugin>("FlightBookingPlugin");
 
+// Configure function choice behavior Auto 1 op.
+// OpenAIPromptExecutionSettings openAIPromptExecutionSettings = new() 
+// {
+//     FunctionChoiceBehavior = FunctionChoiceBehavior.Auto()
+// };
 
-// Configure function choice behavior
-
+// Configure function choice behavior Required 2 op.
+KernelFunction searchFlights = kernel.Plugins.GetFunction("FlightBookingPlugin", "search_flights");
+PromptExecutionSettings openAIPromptExecutionSettings = new()
+{
+    FunctionChoiceBehavior = FunctionChoiceBehavior.Required(functions: [searchFlights])
+};
 
 var history = new ChatHistory();
 history.AddSystemMessage("The year is 2025 and the current month is January");
